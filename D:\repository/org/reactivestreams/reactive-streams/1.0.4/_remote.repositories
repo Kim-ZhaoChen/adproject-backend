@@ -1,0 +1,4 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Thu Aug 15 20:52:08 SGT 2024
+reactive-streams-1.0.4.jar>public=
+reactive-streams-1.0.4.pom>public=

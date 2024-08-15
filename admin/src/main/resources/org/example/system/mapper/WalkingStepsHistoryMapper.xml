@@ -1,0 +1,471 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.example.system.mapper.WalkingStepsHistoryMapper">
+    <resultMap type="org.example.system.domain.WalkingStepsHistory" id="WalkingStepsHistoryResult">
+        <result property="id" column="id"/>
+        <result property="steps" column="steps"/>
+        <result property="userId" column="user_id"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <resultMap type="org.example.system.domain.SysUser" id="SysUserResult">
+        <id property="userId" column="user_id"/>
+        <result property="deptId" column="dept_id"/>
+        <result property="userName" column="user_name"/>
+        <result property="nickName" column="nick_name"/>
+        <result property="email" column="email"/>
+        <result property="phonenumber" column="phonenumber"/>
+        <result property="sex" column="sex"/>
+        <result property="status" column="status"/>
+        <result property="age" column="age"/>
+        <result property="weight" column="weight"/>
+        <result property="height" column="height"/>
+
+    </resultMap>
+
+    <sql id="selectWalkingStepsHistoryVo">
+        select id,
+               steps,
+               user_id,
+               del_flag,
+               create_by,
+               create_time,
+               update_by,
+               update_time,
+               remark
+        from walking_steps_history
+    </sql>
+
+    <select id="selectWalkingStepsHistoryList" resultType="org.example.system.domain.WalkingStepsVo">
+        SELECT sys_user.user_name userName,
+        walking_steps_history.steps steps,
+        walking_steps_history.create_time createTime,
+        sys_user.nick_name nickName
+        FROM `walking_steps_history`
+        LEFT JOIN sys_user ON walking_steps_history.user_id = sys_user.user_id
+        <where>
+            <if test="userName!=null and userName !=''">
+                and sys_user.user_name like concat ('%',#{userName},'%')
+            </if>
+            <if test="steps!=null and steps !=''">
+                and steps >= #{steps}
+            </if>
+        </where>
+        order by sys_user.user_name
+    </select>
+
+    <select id="selectWalkingStepsData" resultType="org.example.system.domain.WalkingStepsDataVo">
+        SELECT
+        walking_steps_history.steps steps,
+        walking_steps_history.distance distance,
+        walking_steps_history.calories calories,
+        walking_steps_history.target_steps targetSteps,
+        walking_steps_history.progress progress
+        FROM walking_steps_history
+        <where>
+            user_id = #{userId}
+            and start_time &gt;= #{startTime}
+            and end_time &lt;= #{endTime}
+
+        </where>
+    </select>
+
+    <select id="selectWalkingStepsHistoryById" parameterType="String" resultMap="WalkingStepsHistoryResult">
+        <include refid="selectWalkingStepsHistoryVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertWalkingStepsHistory" parameterType="org.example.system.domain.WalkingStepsHistory">
+        insert into walking_steps_history
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="activateMinutes !=null">
+                activate_minutes,
+            </if>
+            <if test="steps != null">
+                steps,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="delFlag != null">
+                del_flag,
+            </if>
+            <if test="createBy != null">
+                create_by,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateBy != null">
+                update_by,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+            <if test="calories != null">
+                calories,
+            </if>
+            <if test="targetSteps != null">
+                target_steps,
+            </if>
+            <if test="progress != null">
+                progress,
+            </if>
+            <if test="targetFinished != null">
+                target_finished,
+            </if>
+            <if test="distance !=null">
+                distance,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id},
+            </if>
+            <if test="activateMinutes !=null">
+                #{activateMinutes},
+            </if>
+            <if test="steps != null">
+                #{steps},
+            </if>
+            <if test="userId != null">
+                #{userId},
+            </if>
+            <if test="delFlag != null">
+                #{delFlag},
+            </if>
+            <if test="createBy != null">
+                #{createBy},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="updateBy != null">
+                #{updateBy},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime},
+            </if>
+            <if test="remark != null">
+                #{remark},
+            </if>
+            <if test="calories != null">
+                #{calories},
+            </if>
+            <if test="targetSteps != null">
+                #{targetSteps},
+            </if>
+            <if test="progress != null">
+                #{progress},
+            </if>
+            <if test="targetFinished != null">
+                #{targetFinished},
+            </if>
+            <if test="distance !=null">
+                #{distance} ,
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateWalkingStepsHistory" parameterType="org.example.system.domain.WalkingStepsHistory">
+        update walking_steps_history
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="steps != null">
+                steps = #{steps},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="delFlag != null">
+                del_flag = #{delFlag},
+            </if>
+            <if test="createBy != null">
+                create_by = #{createBy},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateBy != null">
+                update_by = #{updateBy},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="remark != null">
+                remark = #{remark},
+            </if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteWalkingStepsHistoryById" parameterType="String">
+        delete
+        from walking_steps_history
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteWalkingStepsHistoryByIds" parameterType="String">
+        delete from walking_steps_history where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="getByType" resultType="org.example.system.domain.ByTypeStepsVo">
+        <if test="type==1">
+            SELECT
+            DATE( create_time ) AS dateOnly,
+            SUM( steps ) AS totalSteps
+            FROM
+            walking_steps_history
+            WHERE
+            create_time >= DATE_SUB( CURDATE(), INTERVAL 7 DAY )
+            AND user_id = #{userId}
+            GROUP BY
+            DATE( create_time )
+            ORDER BY
+            dateOnly DESC;
+        </if>
+        <if test="type==2">
+            SELECT
+            YEARWEEK( create_time ) AS WEEK,
+            SUM( steps ) AS totalSteps
+            FROM
+            walking_steps_history_copy1
+            WHERE
+            create_time >= DATE_SUB( CURDATE(), INTERVAL 10 WEEK )
+            AND user_id = 10
+            GROUP BY
+            YEARWEEK( create_time )
+            ORDER BY
+            YEARWEEK( create_time ) DESC;
+        </if>
+        <if test="type==3">
+            SELECT
+            DATE_FORMAT( create_time, '%Y-%m' ) AS MONTH,
+            SUM( steps ) AS totalSteps
+            FROM
+            walking_steps_history_copy1
+            WHERE
+            create_time >= DATE_SUB( CURDATE(), INTERVAL 10 MONTH )
+            AND user_id = 10
+            GROUP BY
+            DATE_FORMAT( create_time, '%Y-%m' )
+            ORDER BY
+            MONTH DESC;
+        </if>
+    </select>
+
+    <insert id="goalUser" parameterType="org.example.system.domain.GoalUser">
+        insert into goal_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="goalsSteps != null">
+                goals_steps,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="createBy != null">
+                create_by,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateBy != null">
+                update_by,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="endTime != null">
+                end_time,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id},
+            </if>
+
+            <if test="goalsSteps != null">
+                #{goalsSteps},
+            </if>
+            <if test="userId != null">
+                #{userId},
+            </if>
+
+            <if test="createBy != null">
+                #{createBy},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="updateBy != null">
+                #{updateBy},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime},
+            </if>
+            <if test="remark != null">
+                #{remark},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="getGoalByUser" resultType="java.lang.Long">
+        SELECT goals_steps goalsSteps
+        FROM `goal_user`
+        WHERE user_id = #{userId}
+        and TO_DAYS(create_time) = TO_DAYS(NOW())
+        order by create_time limit 1
+    </select>
+
+    <update id="updateGoalUser" parameterType="org.example.system.domain.GoalUser">
+        update goal_user
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="goalsSteps != null">
+                goals_steps = #{goalsSteps},
+            </if>
+            <if test="endTime != null">
+                end_time = #{endTime},
+            </if>
+
+        </trim>
+        WHERE user_id = #{userId}
+        and TO_DAYS(create_time) = TO_DAYS(NOW())
+        order by create_time limit 1
+    </update>
+
+    <select id="getFriendUser" resultType="org.example.system.domain.FriendUser">
+        SELECT id , user_id userId, friend_user_id friendUserId
+        FROM `friend_user`
+        WHERE (user_id = #{userId}
+            and friend_user_id = #{friendUserId})
+        or (user_id = #{friendUserId}
+        and friend_user_id = #{userId})
+    </select>
+    <insert id="addFriend" parameterType="org.example.system.domain.FriendUser">
+        insert into friend_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="friendUserId != null">
+                friend_user_id,
+            </if>
+            <if test="createBy != null">
+                create_by,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateBy != null">
+                update_by,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id},
+            </if>
+
+            <if test="userId != null">
+                #{userId},
+            </if>
+            <if test="friendUserId != null">
+                #{friendUserId},
+            </if>
+            <if test="createBy != null">
+                #{createBy},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="updateBy != null">
+                #{updateBy},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime},
+            </if>
+            <if test="remark != null">
+                #{remark},
+            </if>
+        </trim>
+    </insert>
+
+    <delete id="delFriend" parameterType="org.example.system.domain.FriendUser">
+        delete from friend_user
+        where
+        (user_id = #{userId}
+        and friend_user_id = #{friendUserId})
+        or (user_id = #{friendUserId}
+        and friend_user_id = #{userId})
+    </delete>
+
+    <select id="getFriendList" resultMap="SysUserResult">
+        select
+        u.user_id,  u.nick_name, u.user_name, u.email, u.avatar, u.phonenumber, u.sex, u.status
+        from
+        sys_user u
+        where
+        u.user_id in ((
+        select
+        user_id
+        from
+        `friend_user`
+        where
+        friend_user_id = #{userId})
+        union (
+        select
+        friend_user_id
+        from
+        `friend_user`
+        where
+        user_id = #{userId}))
+    </select>
+
+    <select id="getFriendStepRank" resultType="org.example.system.domain.WalkingStepsDataVo">
+        select
+        user_id userId,
+        sum(steps) steps
+        from
+        walking_steps_history w
+        where
+        w.user_id in
+        <foreach collection="userIds" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        and TO_DAYS(NOW()) = TO_DAYS(create_time)
+        group by
+        user_id
+        order by
+        sum(steps) desc
+    </select>
+</mapper>
